@@ -32,7 +32,7 @@
         var audioContext = new (window.AudioContext || window.webkitAudioContext)();
         var oscillator = audioContext.createOscillator();
         var isOscillatorPlaying = false;
-        var frequencies = [440, 495, 550, 605, 660, 715, 770, 825, 880, 935]; // Sua lista de frequências
+        var frequencies = [500, 1000, 2000, 5000, 8000, 10000, 12000, 15000, 17000, 20000]; // Sua lista de frequências
         var audioSource;
         var audioBuffer;
         var isAudioPlaying = false;
@@ -62,7 +62,7 @@
         }
 
         // Carrega o arquivo de áudio - substitua 'path_to_your_audio_file' pelo caminho do seu arquivo
-        loadAudio('path_to_your_audio_file');
+        loadAudio('https://drive.google.com/file/d/1QO2pppaCvzX9Em-zkXq5Vid1lABL5U5S/view?usp=sharing');
 
         // Função para tocar o oscilador
         function playOscillator() {
