@@ -35,7 +35,7 @@
         var audioContext = new (window.AudioContext || window.webkitAudioContext)();
         var oscillator = audioContext.createOscillator();
         var isOscillatorPlaying = false;
-        var frequencies = [440, 495, 550, 605, 660, 715, 770, 825, 880, 935]; // Sua lista de frequências
+        var frequencies = [500, 1000, 2000, 5000, 8000, 10000, 12000, 15000, 17000, 20000]; // Sua lista de frequências
         var audioSource;
         var audioBuffer;
         var isAudioPlaying = false;
@@ -72,11 +72,81 @@
             request.send();
         }
 
-        // Carrega o arquivo de áudio - substitua 'path_to_your_audio_file' pelo caminho do seu arquivo
+        // Carrega o arquivo de áudio
         loadAudio('https://raw.githubusercontent.com/nerybauer/tinnitune-V0.1/main/NatureMP3.mp3');
 
-        // Restante do código JavaScript...
+        // Função para tocar o oscilador
+        function playOscillator() {
+            if (!isOscillatorPlaying) {
+                oscillator.start(0);
+                isOscillatorPlaying = true;
+            }
+        }
 
+        // Função para parar o oscilador
+        function stopOscillator() {
+            if (isOscillatorPlaying) {
+                oscillator.stop(0);
+                isOscillatorPlaying = false;
+                // Recreate the oscillator to play again in the future
+                oscillator = audioContext.createOscillator();
+                oscillator.frequency.setValueAtTime(frequencies[frequencySlider.value], audioContext.currentTime);
+                oscillator.connect(notchFilter);
+            }
+        }
+
+        // Função para tocar o áudio
+        function playAudio() {
+            if (audioBuffer) {
+                audioSource = audioContext.createBufferSource();
+                audioSource.buffer = audioBuffer;
+                audioSource.loop = true;
+                audioSource.connect(notchFilter);
+                notchFilter.connect(audioContext.destination);
+                audioSource.start(0);
+                isAudioPlaying = true;
+            }
+        }
+
+        // Função para parar o áudio
+        function stopAudio() {
+            if (isAudioPlaying) {
+                audioSource.stop(0);
+                isAudioPlaying = false;
+            }
+        }
+
+        var frequencySlider = document.getElementById('frequencySlider');
+        var frequencyDisplay = document.getElementById('frequencyDisplay');
+        var playOscillatorButton = document.getElementById('playOscillatorButton');
+        var audioPlayButton = document.getElementById('audioPlayButton');
+
+        frequencySlider.addEventListener('input', function() {
+            var frequencyIndex = parseInt(this.value, 10);
+            var frequency = frequencies[frequencyIndex];
+            notchFilter.frequency.setValueAtTime(frequency, audioContext.currentTime);
+            frequencyDisplay.textContent = 'Frequency: ' + frequency + ' Hz';
+        });
+
+        playOscillatorButton.addEventListener('click', function() {
+            if (!isOscillatorPlaying) {
+                playOscillator();
+                this.textContent = 'Stop Oscillator';
+            } else {
+                stopOscillator();
+                this.textContent = 'Play Oscillator';
+            }
+        });
+
+        audioPlayButton.addEventListener('click', function() {
+            if (!isAudioPlaying) {
+                playAudio();
+                this.textContent = 'Stop Audio';
+            } else {
+                stopAudio();
+                this.textContent = 'Play Audio';
+            }
+        });
     </script>
 </body>
 </html>
